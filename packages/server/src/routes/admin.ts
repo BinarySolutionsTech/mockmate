@@ -119,6 +119,22 @@ router.put('/projects/:id/activate', (req: Request, res: Response) => {
 });
 
 /**
+ * DELETE /api/admin/projects/active
+ * Deactivate the currently active project
+ */
+router.delete('/projects/active', (req: Request, res: Response) => {
+  try {
+    const { readConfig, writeConfig } = require('../services/storage');
+    const config = readConfig();
+    config.activeProjectId = undefined;
+    writeConfig(config);
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message });
+  }
+});
+
+/**
  * PUT /api/admin/projects/:id/scenario
  * Switch active scenario for a project
  */

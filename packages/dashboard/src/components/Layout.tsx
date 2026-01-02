@@ -8,7 +8,7 @@ import { ProjectList } from './ProjectList';
 import { ProjectModal } from './ProjectModal';
 
 interface LayoutProps {
-  children: (activeProjectId: string | undefined) => ReactNode;
+  children: (activeProjectId: string | undefined, deactivateProject: () => Promise<void>) => ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
@@ -19,6 +19,7 @@ export default function Layout({ children }: LayoutProps) {
     error,
     createProject,
     activateProject,
+    deactivateProject,
     deleteProject,
   } = useProjects();
 
@@ -62,7 +63,7 @@ export default function Layout({ children }: LayoutProps) {
 
         {/* Main content area */}
         <main className="flex-1 p-6">
-          {children(activeProjectId)}
+          {children(activeProjectId, deactivateProject)}
         </main>
       </div>
 

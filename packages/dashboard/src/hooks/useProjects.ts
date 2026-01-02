@@ -14,6 +14,7 @@ interface UseProjectsReturn {
   refresh: () => Promise<void>;
   createProject: (data: CreateProjectRequest) => Promise<Project>;
   activateProject: (id: string) => Promise<void>;
+  deactivateProject: () => Promise<void>;
   deleteProject: (id: string) => Promise<void>;
 }
 
@@ -57,6 +58,14 @@ export function useProjects(): UseProjectsReturn {
     await refresh();
   }, [refresh]);
 
+  const deactivateProject = useCallback(async () => {
+    await projectsApi.deactivate();
+    setActiveProjectId(undefined);
+
+    // Refresh to ensure consistency
+    await refresh();
+  }, [refresh]);
+
   const deleteProject = useCallback(async (id: string) => {
     await projectsApi.delete(id);
 
@@ -83,6 +92,7 @@ export function useProjects(): UseProjectsReturn {
     refresh,
     createProject,
     activateProject,
+    deactivateProject,
     deleteProject,
   };
 }

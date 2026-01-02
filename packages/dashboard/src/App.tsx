@@ -8,6 +8,7 @@ import { ResourceList } from './components/ResourceList';
 import { ResourceEditor } from './components/ResourceEditor';
 import { ScenarioEditor } from './components/ScenarioEditor';
 import { ScenarioSwitcher } from './components/ScenarioSwitcher';
+import { DeviceSetup } from './components/DeviceSetup';
 import { useResources } from './hooks/useResources';
 import { serverApi } from './api/client';
 import type { ServerStatus, Resource } from './api/types';
@@ -36,9 +37,10 @@ function App() {
 
   return (
     <Layout>
-      {(activeProjectId) => (
+      {(activeProjectId, deactivateProject) => (
         <AppContent
           activeProjectId={activeProjectId}
+          deactivateProject={deactivateProject}
           status={status}
           loading={loading}
           error={error}
@@ -51,13 +53,14 @@ function App() {
 
 interface AppContentProps {
   activeProjectId: string | undefined;
+  deactivateProject: () => Promise<void>;
   status: ServerStatus | null;
   loading: boolean;
   error: string | null;
   onRefreshStatus: () => Promise<void>;
 }
 
-function AppContent({ activeProjectId, status, loading, error, onRefreshStatus }: AppContentProps) {
+function AppContent({ activeProjectId, deactivateProject, status, loading, error, onRefreshStatus }: AppContentProps) {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
 
@@ -156,6 +159,9 @@ function AppContent({ activeProjectId, status, loading, error, onRefreshStatus }
                 )}
               </div>
 
+              {/* Device Setup Card */}
+              <DeviceSetup httpPort={3456} httpsPort={3457} />
+
               {/* Welcome Card */}
               <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-indigo-900 mb-2">Welcome to MockMate!</h3>
@@ -187,7 +193,18 @@ function AppContent({ activeProjectId, status, loading, error, onRefreshStatus }
           ) : (
             <div className="space-y-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-gray-900">Resources</h2>
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={deactivateProject}
+                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+                  >
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    <span>Back to Dashboard</span>
+                  </button>
+                  <h2 className="text-2xl font-bold text-gray-900">Resources</h2>
+                </div>
                 {status?.activeProject && (
                   <ScenarioSwitcher
                     projectId={activeProjectId}

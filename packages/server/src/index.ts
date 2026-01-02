@@ -1,10 +1,11 @@
 /**
  * MockMate Server Entry Point
- * Starts the HTTP server and initializes storage
+ * Starts both HTTP and HTTPS servers
  */
 
-import { startServer } from './app';
+import { startServers } from './app';
 import { readConfig } from './services/storage';
+import open from 'open';
 
 /**
  * Main entry point
@@ -13,10 +14,21 @@ async function main() {
   try {
     // Read server configuration
     const config = readConfig();
-    const port = config.server?.httpPort || 3456;
+    const httpPort = config.server?.httpPort || 3456;
+    const httpsPort = config.server?.httpsPort || 3457;
 
-    // Start the server
-    await startServer(port);
+    // Start both HTTP and HTTPS servers
+    await startServers({ http: httpPort, https: httpsPort });
+
+    // Auto-open browser (only if not in production)
+    if (process.env.NODE_ENV !== 'production') {
+      try {
+        await open(`http://localhost:${httpPort}`);
+        console.log('✓ Browser opened automatically\n');
+      } catch (error) {
+        console.log('ℹ Could not open browser automatically\n');
+      }
+    }
   } catch (error) {
     console.error('Failed to start server:', error);
     process.exit(1);

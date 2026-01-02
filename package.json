@@ -11,7 +11,9 @@
     "dev:dashboard": "npm run dev --workspace=packages/dashboard",
     "build:server": "npm run build --workspace=packages/server",
     "build:dashboard": "npm run build --workspace=packages/dashboard",
-    "build": "npm run build:server && npm run build:dashboard",
+    "build": "npm run build:dashboard && npm run build:server",
+    "start": "npm run build && npm run start --workspace=packages/server",
+    "postinstall": "npm run build",
     "test": "npm run test --workspaces",
     "lint": "npm run lint --workspaces"
   },

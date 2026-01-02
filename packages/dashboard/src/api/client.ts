@@ -78,6 +78,11 @@ export const projectsApi = {
       method: 'PUT',
     }),
 
+  deactivate: () =>
+    fetchJson<void>(`${API_BASE}/projects/active`, {
+      method: 'DELETE',
+    }),
+
   switchScenario: (id: string, scenario: string) =>
     fetchJson<Project>(`${API_BASE}/projects/${id}/scenario`, {
       method: 'PUT',
